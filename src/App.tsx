@@ -303,7 +303,7 @@ function App() {
         <div className="atelier-marquee" aria-label="Tata Nails — artistry and care">
           <div className="marquee-track" aria-hidden="true">
             {Array.from({ length: 4 }).map((_, index) => (
-              <span key={index}>PRECISION <i>✳</i> PERSONAL STYLE <i>✳</i> BEAUTIFUL DETAILS <i>✳</i> A MOMENT FOR YOU <i>✳</i></span>
+              <span key={index}>PRECISION <i aria-hidden="true"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1.5 9.35 6.65 14.5 8 9.35 9.35 8 14.5 6.65 9.35 1.5 8 6.65 6.65 8 1.5Z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/></svg></i> PERSONAL STYLE <i aria-hidden="true"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1.5 9.35 6.65 14.5 8 9.35 9.35 8 14.5 6.65 9.35 1.5 8 6.65 6.65 8 1.5Z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/></svg></i> BEAUTIFUL DETAILS <i aria-hidden="true"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1.5 9.35 6.65 14.5 8 9.35 9.35 8 14.5 6.65 9.35 1.5 8 6.65 6.65 8 1.5Z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/></svg></i> A MOMENT FOR YOU <i aria-hidden="true"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1.5 9.35 6.65 14.5 8 9.35 9.35 8 14.5 6.65 9.35 1.5 8 6.65 6.65 8 1.5Z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/></svg></i></span>
             ))}
           </div>
         </div>
