@@ -419,7 +419,7 @@ function App() {
           <div className="gallery-grid">
             {portfolio.map((image, index) => (
               <motion.button
-                className={`gallery-item ${image.className}`}
+                className="gallery-item"
                 type="button"
                 key={image.src}
                 onClick={() => setActiveImage(index)}
