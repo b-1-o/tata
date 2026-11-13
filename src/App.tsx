@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import {
   ArrowDown,
   ArrowUpRight,
+  ChevronDown,
   CalendarCheck,
   Check,
   ChevronRight,
@@ -131,6 +132,9 @@ function SectionHeading({
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeImage, setActiveImage] = useState<number | null>(null);
+  const [activeService, setActiveService] = useState<string | null>(null);
+  const { scrollYProgress } = useScroll();
+  const scrollProgress = useSpring(scrollYProgress, { stiffness: 110, damping: 28, restDelta: 0.001 });
 
   useEffect(() => {
     document.body.style.overflow = activeImage !== null ? "hidden" : "";
@@ -160,6 +164,7 @@ function App() {
 
   return (
     <div className="site-shell">
+      <motion.div className="scroll-progress" style={{ scaleX: scrollProgress }} aria-hidden="true" />
       <div className="announcement">
         <Sparkles size={13} strokeWidth={1.7} />
         <span>YOUR MOMENT OF BEAUTY, RIGHT HERE IN NORTH HOLLYWOOD</span>
@@ -237,7 +242,23 @@ function App() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="hero-image-wrap">
+            <div
+              className="hero-image-wrap"
+              onPointerMove={(event) => {
+                if (event.pointerType !== "mouse") return;
+                const bounds = event.currentTarget.getBoundingClientRect();
+                const x = (event.clientX - bounds.left) / bounds.width;
+                const y = (event.clientY - bounds.top) / bounds.height;
+                event.currentTarget.style.setProperty("--tilt-x", `${(0.5 - y) * 5}deg`);
+                event.currentTarget.style.setProperty("--tilt-y", `${(x - 0.5) * 6}deg`);
+                event.currentTarget.style.setProperty("--spot-x", `${x * 100}%`);
+                event.currentTarget.style.setProperty("--spot-y", `${y * 100}%`);
+              }}
+              onPointerLeave={(event) => {
+                event.currentTarget.style.setProperty("--tilt-x", "0deg");
+                event.currentTarget.style.setProperty("--tilt-y", "0deg");
+              }}
+            >
               <img
                 src={portfolio[0].src}
                 alt={portfolio[0].alt}
@@ -248,10 +269,13 @@ function App() {
                 <span>01 / 06</span>
               </div>
             </div>
-            <div className="floating-note">
+            <motion.div className="floating-note" animate={{ y: [0, -8, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
               <span className="note-icon"><Flower2 size={22} strokeWidth={1.2} /></span>
               <span><strong>Made with care</strong><small>Finished with intention</small></span>
-            </div>
+            </motion.div>
+            <motion.div className="hero-seal" animate={{ rotate: 360 }} transition={{ duration: 42, repeat: Infinity, ease: "linear" }} aria-hidden="true">
+              <span>DETAIL · BEAUTY · DETAIL · BEAUTY ·</span><Flower2 size={19} />
+            </motion.div>
             <span className="hero-orbit orbit-one" aria-hidden="true" />
             <span className="hero-orbit orbit-two" aria-hidden="true" />
           </motion.div>
@@ -269,6 +293,14 @@ function App() {
           <i />
           <div><CalendarCheck size={17} /><span><strong>Easy online booking</strong><small>Choose your appointment</small></span></div>
         </section>
+
+        <div className="atelier-marquee" aria-label="Tata Nails — artistry and care">
+          <div className="marquee-track" aria-hidden="true">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <span key={index}>PRECISION <i>✳</i> PERSONAL STYLE <i>✳</i> BEAUTIFUL DETAILS <i>✳</i> A MOMENT FOR YOU <i>✳</i></span>
+            ))}
+          </div>
+        </div>
 
         <section className="services-section section-pad" id="services">
           <div className="section-topline">
@@ -305,7 +337,7 @@ function App() {
             <div className="service-list">
               {services.map((service, index) => (
                 <motion.article
-                  className={service.featured ? "service-row service-row-featured" : "service-row"}
+                  className={`${service.featured ? "service-row service-row-featured" : "service-row"} ${activeService === service.number ? "is-expanded" : ""}`}
                   key={service.number}
                   initial={{ opacity: 0, x: 22 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -317,6 +349,15 @@ function App() {
                     <h3>{service.name}</h3>
                     <p>{service.description}</p>
                     <span className="service-duration"><Clock3 size={13} /> {service.duration}</span>
+                    <button
+                      className="service-more"
+                      type="button"
+                      aria-expanded={activeService === service.number}
+                      onClick={() => setActiveService(activeService === service.number ? null : service.number)}
+                    >
+                      {activeService === service.number ? "Less detail" : "More detail"}
+                      <ChevronDown size={13} />
+                    </button>
                   </div>
                   <div className="service-price">
                     <strong>{service.price}</strong>
@@ -324,6 +365,20 @@ function App() {
                       <ArrowUpRight size={17} />
                     </a>
                   </div>
+                  <AnimatePresence initial={false}>
+                    {activeService === service.number && (
+                      <motion.div
+                        className="service-expanded"
+                        initial={{ height: 0, opacity: 0, y: -5 }}
+                        animate={{ height: "auto", opacity: 1, y: 0 }}
+                        exit={{ height: 0, opacity: 0, y: -5 }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      >
+                        <p>Have a particular length, shape or design in mind? Share your inspiration when booking so the team can help you choose the right appointment.</p>
+                        <a href={BOOKING_URL} target="_blank" rel="noreferrer">Choose this appointment <ArrowUpRight size={14} /></a>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.article>
               ))}
               <p className="price-note">Prices shown are starting prices where indicated. Final pricing may vary by length, design and service details.</p>
