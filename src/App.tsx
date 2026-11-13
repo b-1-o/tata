@@ -44,9 +44,10 @@ const portfolio = [
     className: "",
   },
   {
-    src: "https://images.fresha.com/partner-portfolios/providers/2702996/c06037c9-af1b-4bed-a230-0bdebe960381.png?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=oyvCOyAPwZV4vJRz+qYsEcxhs8E",
+    src: "https://images.fresha.com/partner-portfolios/providers/2702996/c06037c9-af1b-4bed-a230-0bdebe960381.png?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=oyvCOyAPwZV4vJRz%2BqYsEcxhs8E",
     alt: "Pink stiletto nail design by Tata Nails",
     label: "Made to stand out",
+    fallbackSrc: "https://images.fresha.com/partner-portfolios/providers/2702996/687b8cc8-dbfd-458f-a5f4-5394bde45650.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=wfhEfHTZKd3Sos84yVWPmO8DiLM",
     className: "",
   },
   {
@@ -65,6 +66,7 @@ const portfolio = [
     src: "https://images.fresha.com/partner-portfolios/providers/2702996/c09ea212-bc3d-40ab-9483-52e56b8f3517.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=DuQul5KH%2FghP%2FkCeLZECPW3mRI8",
     alt: "French manicure with a ribbon bow on soft satin by Tata Nails",
     label: "The finishing touch",
+    fallbackSrc: "https://images.fresha.com/partner-portfolios/providers/2702996/3058bfcf-9c92-4622-8fa1-7ee4927bfc86.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=hR4xWwtmBrC6MLOvICPHsoQVmOc",
     className: "",
   },
 ];
@@ -134,6 +136,7 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeImage, setActiveImage] = useState<number | null>(null);
   const [activeService, setActiveService] = useState<string | null>(null);
+  const [imageFallbacks, setImageFallbacks] = useState<Record<number, boolean>>({});
   const { scrollYProgress } = useScroll();
   const scrollProgress = useSpring(scrollYProgress, { stiffness: 110, damping: 28, restDelta: 0.001 });
 
@@ -218,6 +221,25 @@ function App() {
         </nav>
       </header>
 
+      <section className="quick-info-strip" aria-label="Important Tata Nails information">
+        <div className="quick-info-main">
+          <div className="quick-info-intro">
+            <span className="quick-info-kicker">TATEV OGANISYAN · NAIL ARTISTRY & EDUCATION</span>
+            <strong>Russian gel manicure <i>·</i> Pedicure <i>·</i> Upper forms</strong>
+          </div>
+          <div className="quick-info-actions">
+            <a className="quick-call" href="tel:+18189611717"><Phone size={15} /> (818) 961-1717</a>
+            <a className="quick-book" href={BOOKING_URL} target="_blank" rel="noreferrer">Book online <ArrowUpRight size={14} /></a>
+          </div>
+        </div>
+        <div className="quick-info-details">
+          <span><MapPin size={13} /> 12917 Sherman Way, North Hollywood</span>
+          <span><Clock3 size={13} /> Mon–Fri 8:30 AM–10 PM <i>·</i> Sat–Sun 10 AM–10 PM</span>
+          <span><MessageCircle size={13} /> English · Русский · Հայերեն</span>
+          <span><Sparkles size={13} /> Parking · Pet-friendly</span>
+        </div>
+      </section>
+
       <main>
         <section className="hero" id="home">
           <div className="hero-marble" aria-hidden="true" />
@@ -229,6 +251,7 @@ function App() {
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
               <span className="eyebrow"><span />A NAIL STUDIO WITH A PERSONAL TOUCH</span>
+              <span className="hero-artist-line">TATEV OGANISYAN <i>·</i> NAIL ARTIST & EDUCATOR</span>
               <h1>Beauty is in<br />the <em>details.</em></h1>
               <p className="hero-lede">
                 Thoughtful nail care, beautiful artistry, and a little time that is entirely yours.
@@ -439,7 +462,15 @@ function App() {
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.6, delay: (index % 3) * 0.08 }}
               >
-                <img src={image.src} alt={image.alt} loading="lazy" />
+                <img
+                  src={imageFallbacks[index] ? (image.fallbackSrc ?? portfolio[0].src) : image.src}
+                  alt={image.alt}
+                  loading="lazy"
+                  decoding="async"
+                  onError={() => {
+                    if (!imageFallbacks[index]) setImageFallbacks((current) => ({ ...current, [index]: true }));
+                  }}
+                />
                 <span className="gallery-overlay"><span>{image.label}</span><span className="gallery-open"><ArrowUpRight size={17} /></span></span>
               </motion.button>
             ))}
@@ -604,7 +635,13 @@ function App() {
               transition={{ duration: 0.22 }}
               onClick={(event) => event.stopPropagation()}
             >
-              <img src={portfolio[activeImage].src} alt={portfolio[activeImage].alt} />
+              <img
+                src={imageFallbacks[activeImage] ? (portfolio[activeImage].fallbackSrc ?? portfolio[0].src) : portfolio[activeImage].src}
+                alt={portfolio[activeImage].alt}
+                onError={() => {
+                  if (!imageFallbacks[activeImage]) setImageFallbacks((current) => ({ ...current, [activeImage]: true }));
+                }}
+              />
               <div className="lightbox-caption"><span>{portfolio[activeImage].label}</span><span>0{activeImage + 1} / 0{portfolio.length}</span></div>
             </motion.div>
             <button
