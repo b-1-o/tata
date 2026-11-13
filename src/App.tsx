@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
+import Lenis from "lenis";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -135,6 +136,22 @@ function App() {
   const [activeService, setActiveService] = useState<string | null>(null);
   const { scrollYProgress } = useScroll();
   const scrollProgress = useSpring(scrollYProgress, { stiffness: 110, damping: 28, restDelta: 0.001 });
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    const lenis = new Lenis({
+      autoRaf: true,
+      duration: 1.12,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 0.88,
+      anchors: { offset: -82 },
+    });
+
+    return () => lenis.destroy();
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = activeImage !== null ? "hidden" : "";
