@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import Lenis from "lenis";
+import { siteImages, galleryImages } from "./assets.generated";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -30,54 +31,8 @@ const DIRECTIONS_URL =
 const TAPLINK_URL = "https://taplink.cc/tatanails";
 const TELEGRAM_URL = "https://t.me/tata_nailsnf";
 
-type PortfolioImage = {
-  src: string;
-  alt: string;
-  label: string;
-  className: string;
-  fallbackSrc?: string;
-};
-
-const portfolio: PortfolioImage[] = [
-  {
-    src: "https://images.fresha.com/partner-portfolios/providers/2702996/3058bfcf-9c92-4622-8fa1-7ee4927bfc86.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=hR4xWwtmBrC6MLOvICPHsoQVmOc",
-    alt: "Tata Nails French manicure with a delicate white bow",
-    label: "A little detail",
-    className: "gallery-tall",
-  },
-  {
-    src: "https://images.fresha.com/partner-portfolios/providers/2702996/687b8cc8-dbfd-458f-a5f4-5394bde45650.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=wfhEfHTZKd3Sos84yVWPmO8DiLM",
-    alt: "Elegant gel nail art by Tata Nails",
-    label: "Soft elegance",
-    className: "",
-  },
-  {
-    src: "https://images.fresha.com/partner-portfolios/providers/2702996/c06037c9-af1b-4bed-a230-0bdebe960381.png?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=oyvCOyAPwZV4vJRz%2BqYsEcxhs8E",
-    alt: "Pink stiletto nail design by Tata Nails",
-    label: "Made to stand out",
-    fallbackSrc: "https://images.fresha.com/partner-portfolios/providers/2702996/687b8cc8-dbfd-458f-a5f4-5394bde45650.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=wfhEfHTZKd3Sos84yVWPmO8DiLM",
-    className: "",
-  },
-  {
-    src: "https://images.fresha.com/partner-portfolios/providers/2702996/fbbce108-722e-4617-8bd5-278d9ae4b54d.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=cRZu5eW65ynknOiPMt4rALUaz2w",
-    alt: "Glossy red gel manicure with elegant nail art by Tata Nails",
-    label: "A classic, reimagined",
-    className: "",
-  },
-  {
-    src: "https://images.fresha.com/partner-portfolios/providers/2702996/de279967-2409-4a81-9be3-1fda152f1602.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=bIhTjEz6HVqbqwJScnlBOfT7d9o",
-    alt: "Soft pink ombre gel nails by Tata Nails",
-    label: "Blush tones",
-    className: "gallery-wide",
-  },
-  {
-    src: "https://images.fresha.com/partner-portfolios/providers/2702996/c09ea212-bc3d-40ab-9483-52e56b8f3517.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=DuQul5KH%2FghP%2FkCeLZECPW3mRI8",
-    alt: "French manicure with a ribbon bow on soft satin by Tata Nails",
-    label: "The finishing touch",
-    fallbackSrc: "https://images.fresha.com/partner-portfolios/providers/2702996/3058bfcf-9c92-4622-8fa1-7ee4927bfc86.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=hR4xWwtmBrC6MLOvICPHsoQVmOc",
-    className: "",
-  },
-];
+const { hero: heroImage, studio: studioImage } = siteImages;
+const portfolio = galleryImages;
 
 const services = [
   {
@@ -144,7 +99,6 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeImage, setActiveImage] = useState<number | null>(null);
   const [activeService, setActiveService] = useState<string | null>(null);
-  const [imageFallbacks, setImageFallbacks] = useState<Record<number, boolean>>({});
   const { scrollYProgress } = useScroll();
   const scrollProgress = useSpring(scrollYProgress, { stiffness: 110, damping: 28, restDelta: 0.001 });
 
@@ -309,8 +263,14 @@ function App() {
               }}
             >
               <img
-                src={portfolio[0].src}
-                alt={portfolio[0].alt}
+                src={heroImage.src}
+                srcSet={heroImage.srcSet}
+                sizes="(max-width: 760px) 86vw, 42vw"
+                width={heroImage.width}
+                height={heroImage.height}
+                alt={heroImage.alt}
+                loading="eager"
+                decoding="async"
                 fetchPriority="high"
               />
               <div className="image-caption">
@@ -321,9 +281,6 @@ function App() {
             <motion.div className="floating-note" animate={{ y: [0, -8, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
               <span className="note-icon"><Flower2 size={22} strokeWidth={1.2} /></span>
               <span><strong>Made with care</strong><small>Finished with intention</small></span>
-            </motion.div>
-            <motion.div className="hero-seal" animate={{ rotate: 360 }} transition={{ duration: 42, repeat: Infinity, ease: "linear" }} aria-hidden="true">
-              <span>DETAIL · BEAUTY · DETAIL · BEAUTY ·</span><Flower2 size={19} />
             </motion.div>
             <span className="hero-orbit orbit-one" aria-hidden="true" />
             <span className="hero-orbit orbit-two" aria-hidden="true" />
@@ -373,13 +330,14 @@ function App() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.7 }}
             >
-              <div className="service-feature-image">
-                <img src={portfolio[4].src} alt={portfolio[4].alt} loading="lazy" />
-                <span className="image-tag"><Sparkles size={13} /> CLIENT FAVOURITE</span>
-              </div>
-              <div className="feature-note">
-                <span>01 — SIGNATURE CARE</span>
-                <p>Beautifully considered, from the first detail to the final finish.</p>
+              <div className="service-feature-editorial">
+                <span className="service-feature-kicker">THE TATA SIGNATURE · 01</span>
+                <div className="service-feature-ornament"><Flower2 size={39} strokeWidth={1} /></div>
+                <span className="eyebrow">RUSSIAN GEL MANICURE</span>
+                <h3>Precision<br /><em>meets artistry.</em></h3>
+                <p>Thoughtful cuticle care, refined technique and a finish made around your personal style.</p>
+                <a href={BOOKING_URL} target="_blank" rel="noreferrer">Discover the signature service <ArrowUpRight size={15} /></a>
+                <span className="service-feature-foot">DETAIL · CARE · CRAFT</span>
               </div>
             </motion.div>
 
@@ -472,13 +430,15 @@ function App() {
                 transition={{ duration: 0.6, delay: (index % 3) * 0.08 }}
               >
                 <img
-                  src={imageFallbacks[index] ? (image.fallbackSrc ?? portfolio[0].src) : image.src}
+                  src={image.src}
+                  srcSet={image.srcSet}
+                  sizes="(max-width: 760px) 88vw, 44vw"
+                  width={image.width}
+                  height={image.height}
                   alt={image.alt}
                   loading="lazy"
                   decoding="async"
-                  onError={() => {
-                    if (!imageFallbacks[index]) setImageFallbacks((current) => ({ ...current, [index]: true }));
-                  }}
+                  fetchPriority="low"
                 />
                 <span className="gallery-overlay"><span>{image.label}</span><span className="gallery-open"><ArrowUpRight size={17} /></span></span>
               </motion.button>
@@ -493,9 +453,14 @@ function App() {
         <section className="experience-section" id="about">
           <div className="experience-image">
             <img
-              src="https://images.fresha.com/locations/location-profile-images/2702996/5137372/9a64e515-b877-416e-a308-f9f514274efc-TataNails-US-California-LosAngeles-NorthHollywood-Fresha.jpg?class=venue-gallery-large&f_quality=75&f_width=1920"
-              alt="Tata Nails studio in North Hollywood"
+              src={studioImage.src}
+              srcSet={studioImage.srcSet}
+              sizes="(max-width: 760px) 90vw, 46vw"
+              width={studioImage.width}
+              height={studioImage.height}
+              alt={studioImage.alt}
               loading="lazy"
+              decoding="async"
             />
             <span className="experience-image-label">A PLACE TO UNWIND</span>
           </div>
@@ -645,11 +610,11 @@ function App() {
               onClick={(event) => event.stopPropagation()}
             >
               <img
-                src={imageFallbacks[activeImage] ? (portfolio[activeImage].fallbackSrc ?? portfolio[0].src) : portfolio[activeImage].src}
+                src={portfolio[activeImage].largeSrc}
                 alt={portfolio[activeImage].alt}
-                onError={() => {
-                  if (!imageFallbacks[activeImage]) setImageFallbacks((current) => ({ ...current, [activeImage]: true }));
-                }}
+                width={portfolio[activeImage].width}
+                height={portfolio[activeImage].height}
+                decoding="async"
               />
               <div className="lightbox-caption"><span>{portfolio[activeImage].label}</span><span>0{activeImage + 1} / 0{portfolio.length}</span></div>
             </motion.div>
