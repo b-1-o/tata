@@ -30,7 +30,15 @@ const DIRECTIONS_URL =
 const TAPLINK_URL = "https://taplink.cc/tatanails";
 const TELEGRAM_URL = "https://t.me/tata_nailsnf";
 
-const portfolio = [
+type PortfolioImage = {
+  src: string;
+  alt: string;
+  label: string;
+  className: string;
+  fallbackSrc?: string;
+};
+
+const portfolio: PortfolioImage[] = [
   {
     src: "https://images.fresha.com/partner-portfolios/providers/2702996/3058bfcf-9c92-4622-8fa1-7ee4927bfc86.jpeg?class=square512&dpr=1&f_quality=75&f_width=1920&keyId=rl8WOyy9WOMLne9A&signature=hR4xWwtmBrC6MLOvICPHsoQVmOc",
     alt: "Tata Nails French manicure with a delicate white bow",
@@ -237,6 +245,7 @@ function App() {
           <span><Clock3 size={13} /> Mon–Fri 8:30 AM–10 PM <i>·</i> Sat–Sun 10 AM–10 PM</span>
           <span><MessageCircle size={13} /> English · Русский · Հայերեն</span>
           <span><Sparkles size={13} /> Parking · Pet-friendly</span>
+          <a href={TAPLINK_URL} target="_blank" rel="noreferrer"><Flower2 size={13} /> Upper forms · Online education <ArrowUpRight size={11} /></a>
         </div>
       </section>
 
